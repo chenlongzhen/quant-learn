@@ -1,13 +1,15 @@
+#encoding=utf-8
+# 判断尾盘30min 拉升3%
+
 import tushare as ts
-import pandas as pd
-import numpy as np
-import datetime 
+import datetime
+import MySQLdb as mdb
 
 def _ifLasheng(stockid='000001', date='2017-10-15'):
     '''get one days weipan change'''
     
     now = datetime.datetime.strptime(date, '%Y-%m-%d')
-    nowPlusOne = datetime.timedelta(days = 1)
+    nowPlusOne = now + datetime.timedelta(days = 1)
 
     nowStr = now.strftime('%Y-%m-%d')
     nowPlusOneStr = nowPlusOne.strftime('%Y-%m-%d')
@@ -28,15 +30,16 @@ def stockLasheng(date = '2017-10-15'):
     '''    
     stockBasic = ts.get_stock_basics()
     stockAllId = stockBasic.index
-    stockName =  stockBasic['name']
+    stockName =  stockBasic['name'].values.tolist()
     
     
     symbols = []
-    for sid,sname in zip(stockAllId, sotckName):
+    for sid,sname in zip(stockAllId, stockName):
         try:
+            print("[info] begin to get {}".format(sid))
             lasheng = _ifLasheng(sid,date)
         except Exception as e:
-            lashen = Flase
+            lasheng = False
             print("[error] {}".format(e))
         if lasheng:
             symbols.append(
@@ -55,7 +58,7 @@ def intoDB(symbols):
     db_host = 'localhost'
     db_user = 'clz'
     db_pass = '1'
-    db_name = 'securities_master'
+    db_name = 'stock'
 
     con = mdb.connect(
         host=db_host, user=db_user, passwd=db_pass, db=db_name
@@ -65,7 +68,7 @@ def intoDB(symbols):
     column_str = """stockname, stockid, stockdate, iflasheng"""
 
     insert_str = ("%s, " * 4)[:-2]
-    final_str = "INSERT INTO symbol (%s) VALUES (%s)" % \
+    final_str = "INSERT INTO lasheng (%s) VALUES (%s)" % \
         (column_str, insert_str)
 
     # Using the MySQL connection, carry out 
@@ -76,7 +79,10 @@ def intoDB(symbols):
 
 
 def main(_):
-    symbols = stockLasheng(date = "2017-10-15")
-    initoDB(symbols)
+    date = datetime.datetime.now() + datetime.timedelta(days=-1)
+    date = date.strftime("%Y-%m-%d")
+    symbols = stockLasheng(date = date)
+    intoDB(symbols)
 
-        
+if __name__ == "__main__":
+    main(1)

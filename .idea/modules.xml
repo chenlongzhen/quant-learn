@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../quant-learn/.idea/代码.iml" filepath="$PROJECT_DIR$/../quant-learn/.idea/代码.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/quant1.iml" filepath="$PROJECT_DIR$/.idea/quant1.iml" />
+      <module fileurl="file://$USER_HOME$/quant-learn/.idea/代码.iml" filepath="$USER_HOME$/quant-learn/.idea/代码.iml" />
     </modules>
   </component>
 </project>
