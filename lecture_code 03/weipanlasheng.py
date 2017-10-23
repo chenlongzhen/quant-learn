@@ -19,9 +19,11 @@ def _ifLasheng(stockid='000001', date='2017-10-15'):
     change = closeData['price_change']/closeData['open']
 
     if change >= 0.03:
-        return True
+        return 1
+    elif change <= -0.03:
+        return -1
     else:
-        return False
+        return 0
 
 
 def stockLasheng(date = '2017-10-15'):
@@ -41,9 +43,9 @@ def stockLasheng(date = '2017-10-15'):
         except Exception as e:
             lasheng = False
             print("[error] {}".format(e))
-        if lasheng:
+        if lasheng != 0:
             symbols.append(
-                    (sid,sname,date,1)
+                    (sid,sname,date,lasheng)
                     )
 
     return symbols
@@ -77,10 +79,27 @@ def intoDB(symbols):
         cur = con.cursor()
         cur.executemany(final_str, symbols)
 
+def getYesterday():
+
+    sign = True
+    print("[INFO] get yesterday...")
+    date = datetime.datetime.now()
+    yesterOneDay =  datetime.timedelta(days=-1)
+    while sign:
+        date += yesterOneDay
+        print date
+        print date.weekday()
+        if date.weekday() >= 5:
+            pass
+        else:
+            sign = False
+    dataStr = date.strftime("%Y-%m-%d")
+    print("[INFO] get date {}".format(dataStr))
+    return dataStr
+
 
 def main(_):
-    date = datetime.datetime.now() + datetime.timedelta(days=-1)
-    date = date.strftime("%Y-%m-%d")
+    date = getYesterday()
     symbols = stockLasheng(date = date)
     intoDB(symbols)
 

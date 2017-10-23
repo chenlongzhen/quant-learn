@@ -25,8 +25,6 @@ def getStockVar(stockId,start,end,ktype='D'):
     var = closeData - openData
     return var
 
-
-
 def getDiff(stockList):
     '''
     get var DataFrame
@@ -66,6 +64,7 @@ print("data finished")
 
 edge_model = covariance.GraphLassoCV()
 edge_model.fit(x)
+
 centers, labels = cluster.affinity_propagation(edge_model.covariance_)
 n_labels = labels.max()
 
